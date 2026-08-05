@@ -21,7 +21,15 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    timestamps: true//Date created and updated at
-})
+    color: {
+        type: String
+    }
+},
+
+{timestamps: true} //Date created and updated at
+
+)
 
 const Product = mongoose.model("Product", productSchema);
+
+module.exports = Product;//export module to be used in other files 

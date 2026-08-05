@@ -31,11 +31,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "userr"],
         default: "user"
-    },
+    }
+},
 
-    timestamps: true// Date created and Updated at
-})
+{timestamps: true} // Date created and updated at
+
+)
 
 
 //create model from schema
 const User = mongoose.model("User", userSchema);
+
+module.exports = User; // export module to be use in other files
