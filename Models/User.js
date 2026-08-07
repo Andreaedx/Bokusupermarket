@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    hasAtmCard: {
+    HasAdminAcess: {
         type: Boolean,
         default: false
     },
@@ -29,14 +29,14 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "userr"],
+        enum: ["superadmin", "storekeeper", "saleperson"], // Define the allowed roles
         default: "user"
     }
 },
 
 {timestamps: true} // Date created and updated at
 
-)
+);
 
 
 //create model from schema
