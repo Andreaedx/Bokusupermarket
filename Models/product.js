@@ -23,6 +23,13 @@ const productSchema = new mongoose.Schema({
     },
     color: {
         type: String
+    },
+    isAvailable: {
+        type: Boolean,
+        default: true
+    },
+    image: {
+        type: String
     }
 },
 

@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
+        enum: ["male", "female"],
         required: true
     },
     HasAdminAcess: {
@@ -29,9 +30,9 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["superadmin", "storekeeper", "saleperson"], // Define the allowed roles
+        enum: ["superadmin", "storekeeper", "saleperson", "user"], // Define the allowed roles
         default: "user"
-    }
+    },
 },
 
 {timestamps: true} // Date created and updated at
