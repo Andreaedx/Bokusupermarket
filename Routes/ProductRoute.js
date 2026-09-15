@@ -13,15 +13,13 @@ const  productController = require("../Controllers/ProductController");
 const upload = require("../Middleware/upload");
 
 
-//define the routes for product
+router.get('/available', authenticate, authorize("customer"), productController.getAvailaleProducts);
 
+//define the routes for Internal product
 router.post('/createproduct', authenticate, authorize("superadmin", "storekeeper"), upload.single("image"), productController.createProduct);
-
 router.put("/updateproduct/:id", authenticate, authorize("storekeeper"), productController.updateProductbyid);
-
-router.get("/getproduct/:id", authenticate, authorize("saleperson"), productController.getproductbyid);
-router.get("/getallproducts", authenticate, authorize("superadmin", "storekeeper"), productController.getallproducts);
-
+router.get("/getproduct/:id", authenticate, authorize("salesperson"), productController.getproductbyid);
+router.get("/getallproducts", authenticate, authorize("superadmin", "storekeeper", "salesperson"), productController.getallproducts);
 router.delete("/delete/:id", authenticate, authorize("storekeeper"), productController.deleteproductbyid);
 
 //export the router to be used in other files
