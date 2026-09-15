@@ -5,19 +5,20 @@ const jwt = require("jsonwebtoken");
 //create a user
 exports.createUser = async (req, res) => {
     try {
+          const { name, email, gender, phone } = req.body;
         //check all required fields are provided
-        if(!req.body.name || !req.body.email || !req.body.password || !req.body.gender || !req.body.phone) {
+        if(!name || !email || !req.body.password || !gender || !phone) {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
         //check email
-        const existingUser = await User.findOne({ email: req.body.email });
+        const existingUser = await User.findOne({ email: email });
         if (existingUser){
             return res.status(400).json({ message: "Email already exists" });
         }
 
         //check phone number
-        const existingPhone = await User.findOne({ phone: req.body.phone });
+        const existingPhone = await User.findOne({ phone: phone });
         if (existingPhone) {
             return res.status(400).json({ message: "Phone number already exists" });
         }
@@ -43,7 +44,7 @@ exports.createUser = async (req, res) => {
 };
 
 //login user
-exports.loginuser = async (req, res) => {
+exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
