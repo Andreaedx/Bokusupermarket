@@ -5,7 +5,7 @@ exports.authenticate = (req, res, next) => {
     //get the token from the authorization header
     const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
     if(!token){
-        res.status(401).json({ message: "not authorized, no token"})
+        return res.status(401).json({ message: "not authorized, no token"})
     }
 
     try {
@@ -13,6 +13,6 @@ exports.authenticate = (req, res, next) => {
         req.user = decoded;
         next();
     }catch (error) {
-        res.status(500).json({ message: "not authorized, token failed"});
+        res.status(401).json({ message: "not authorized, token failed"});
     }
 };

@@ -9,6 +9,9 @@ const storage = new CloudinaryStorage({
         folder: "bokkusupermarket",
         allowedFormats: ["jpg", "jpeg", "png"],
         transformation: [{ width: 500, height: 500, crop: "limit" }]
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024
     }
 });
 

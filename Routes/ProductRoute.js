@@ -14,12 +14,10 @@ const upload = require("../Middleware/upload");
 
 
 //define the routes for product
-router.post("/createproduct", authenticate, authorize("superadmin", "storekeeper"), productController.createProduct);
 
-//for testing purpose
-router.post("/createproductwithimage", authenticate, upload.single("image"), productController.createProductWithImageUpload);
+router.post('/createproduct', authenticate, authorize("superadmin", "storekeeper"), upload.single("image"), productController.createProduct);
 
-router.put("/updateproduct/:id", authenticate, authorize("storekeeper"), productController.getallproducts);
+router.put("/updateproduct/:id", authenticate, authorize("storekeeper"), productController.updateProductbyid);
 
 router.get("/getproduct/:id", authenticate, authorize("saleperson"), productController.getproductbyid);
 router.get("/getallproducts", authenticate, authorize("superadmin", "storekeeper"), productController.getallproducts);
