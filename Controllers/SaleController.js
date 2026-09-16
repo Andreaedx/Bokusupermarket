@@ -1,33 +1,25 @@
-const Sale = require("../Models/Order");
-const User = require("../Models/User");
-const Product = require("../Models/product");
+const saleService = require("../Services/saleService");
 
 exports.createSale = async (req, res) => {
     try {
-        const customer = await User.findById({ id: id });
-        if(!customer){
-            return res.status(400).json({ message: "Customer not found" });
-        }
+        const { customer, items, discount, paymentMethod } = req.body;
 
-        const product = await Product.findById({ id: id });
-        if(!product){
-            return res.status(400).json({ message: "Product not found" });
-        }
+        const sale = await saleService.createSale({
+            customer,
+            salesperson: req.user._id,
+            items,
+            discount,
+            paymentMethod
+        });
 
-        const sale = new Order(
-            {
-                customer,
-                salesperson,
-                items,
-                subtotal,
-                discount,
-                totalAmount,
-                paymentMethod,
-                paymentStatus
-            }
-        )
-
+        res.status(201).json({
+            success: true,
+            data: sale,
+        });
     } catch (error) {
-
+        console.error(error);
+        res.status(500).json({
+            message: "Something went wrong"
+        });
     }
 }
