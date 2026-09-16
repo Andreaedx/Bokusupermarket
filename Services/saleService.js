@@ -5,6 +5,8 @@ const Product = require("../Models/product");
 const SaleItem = require("../Models/SaleItem");
 const Customer = require("../Models/User");
 
+const AppError = require("../utils/AppError");
+
 const createSale = async ({
     customer,
     salesperson,
@@ -23,17 +25,17 @@ const createSale = async ({
         }).session(session);
 
         if(!customerExist){
-            throw new Error("customer not found");
+            throw new AppError("Customer not found", 404);
         }
 
         //Validate sale items
         if(!items || items.length === 0){
-            throw new Error("sales must contain items!");
+            throw new ApiError("sales must contain items!", 400);
         }
 
         //Validate discount
         if(discount < 0){
-            throw new Error("discount cannot be negative");
+            throw new ApiError("discount cannot be negative", 400);
         }
 
         //Create saleItems and reduce inventory 
@@ -43,11 +45,11 @@ const createSale = async ({
         for(const item of items){
 
             if(!items.product){
-                throw new Error("Product is required for sale");
+                throw new ApiError("Product is required for sale", 400);
             }
 
             if(!Number.isInteger(item.quantity) || item.quantity < 1){
-                throw new Error("Quantity must be a whole number greater than 0");
+                throw new ApiError("Quantity must be a whole number greater than 0", 400);
             }
 
             //Atomically check quantity and reduce inventory
@@ -68,7 +70,7 @@ const createSale = async ({
             );
 
             if(!product){
-                throw new Error(`product ${item.product} no found or Insufficient stock`);
+                throw new ApiError(`product ${item.product} no found or Insufficient stock`, 400);
             }
 
             //Update availability
@@ -101,7 +103,7 @@ const createSale = async ({
 
         // final calculation with discount
         if(discount > subtotal){
-            throw new Error("Discount cannot be greater than the sale subtotal");
+            throw new ApiError("Discount cannot be greater than the sale subtotal", 400);
         }
 
         const totalAmount = subtotal = discount;

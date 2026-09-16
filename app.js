@@ -8,12 +8,17 @@ app.use(express.json());// middleware to parse json request bodies
 const connectDB = require("./Config/databaseConfig");
 connectDB();
 
+const errorHandler = require("./Middleware/errorHandler");
 const productRoute = require("./Routes/ProductRoute");
 const userRoute = require("./Routes/UserRoute");
+
 
 app.use("/products", productRoute);//product route foe all request starting with /product
 app.use("/user", userRoute);//user route for all request starting with /user
 
+
+//Error handler MUST come after routes 
+app.use("errorHandler");
 
 app.listen(process.env.PORT, () => {
     console.log(`server is running on port ${process.env.PORT}`);

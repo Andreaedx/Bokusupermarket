@@ -1,6 +1,6 @@
 const saleService = require("../Services/saleService");
 
-exports.createSale = async (req, res) => {
+exports.createSale = async (req, res, next) => {
     try {
         const { customer, items, discount, paymentMethod } = req.body;
 
@@ -17,9 +17,10 @@ exports.createSale = async (req, res) => {
             data: sale,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Something went wrong"
-        });
+        next(error);
+        // console.error(error);
+        // res.status(500).json({
+        //     message: "Something went wrong"
+        // });
     }
 }
