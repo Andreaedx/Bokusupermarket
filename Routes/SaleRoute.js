@@ -8,6 +8,8 @@ router.post("/create", authenticate, authorize("admin", "salesperson"), saleCont
 router.get("/my-sales", authenticate, authorize("salesperson"), saleController.getMySale);
 router.get("/", authenticate, authorize("superadmin"), saleController.getAllSales);
 
+module.exports = router;
+
 
 
 

@@ -52,6 +52,15 @@ const createSale = async ({
                 throw new ApiError("Quantity must be a whole number greater than 0", 400);
             }
 
+            //Check if product exists
+            const productExists = await Product.exists({
+                _id: item.product,
+            }).session(session);
+
+            if (!productExists) {
+                throw new AppError(`Product ${item.product} not found`, 404);
+            }
+
             //Atomically check quantity and reduce inventory
             const product = await Product.findByIdAndUpdate(
                 {
@@ -69,12 +78,17 @@ const createSale = async ({
                 }
             );
 
-            if(!product){
-                throw new ApiError(`product ${item.product} no found or Insufficient stock`, 400);
+            if (!product) {
+                const currentProduct = await Product.findById(
+                    item.product
+                ).select("name quantity").session(session);
+
+                throw new AppError(`Insufficient stock for ${currentProduct.name}. Only ${currentProduct.quantity} available.`, 409);
             }
 
             //Update availability
             if(product.quantity === 0){
+
                 product.isAvailable = false;
                 await product.save({ session });
             }

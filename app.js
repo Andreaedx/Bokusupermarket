@@ -11,14 +11,16 @@ connectDB();
 const errorHandler = require("./Middleware/errorHandler");
 const productRoute = require("./Routes/ProductRoute");
 const userRoute = require("./Routes/UserRoute");
+const saleRoute = require("./Routes/SaleRoute");
 
 
 app.use("/products", productRoute);//product route foe all request starting with /product
 app.use("/user", userRoute);//user route for all request starting with /user
+app.use("/sale", saleRoute);
 
 
 //Error handler MUST come after routes 
-app.use("errorHandler");
+app.use("errorHandler", errorHandler);
 
 app.listen(process.env.PORT, () => {
     console.log(`server is running on port ${process.env.PORT}`);
