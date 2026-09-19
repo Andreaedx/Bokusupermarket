@@ -14,7 +14,7 @@ const userRoute = require("./Routes/UserRoute");
 const saleRoute = require("./Routes/SaleRoute");
 
 
-app.use("/products", productRoute);//product route foe all request starting with /product
+app.use("/product", productRoute);//product route foe all request starting with /product
 app.use("/user", userRoute);//user route for all request starting with /user
 app.use("/sale", saleRoute);
 

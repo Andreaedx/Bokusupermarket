@@ -13,7 +13,7 @@ const  productController = require("../Controllers/ProductController");
 const upload = require("../Middleware/upload");
 
 
-router.get('/available', authenticate, authorize("customer"), productController.getAvailaleProducts);
+// router.get('/available', authenticate, authorize("customer"), productController.getAvailaleProducts);
 
 //define the routes for Internal product
 router.post('/createproduct', authenticate, authorize("superadmin", "storekeeper"), upload.single("image"), productController.createProduct);

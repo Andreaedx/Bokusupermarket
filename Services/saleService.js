@@ -16,26 +16,37 @@ const createSale = async ({
 }) => {
     const session = await mongoose.startSession();
 
+    session.startTransaction();
+
     try {
 
 
         //validate customer
         const customerExist = await Customer.exists({
-            _id: customer._id,
+            _id: customer,
         }).session(session);
 
         if(!customerExist){
-            throw new AppError("Customer not found", 404);
+            throw new AppError(
+                "Customer not found", 
+                404
+            );
         }
 
         //Validate sale items
         if(!items || items.length === 0){
-            throw new ApiError("sales must contain items!", 400);
+            throw new AppError(
+                "sales must contain items!", 
+                400
+            );
         }
 
         //Validate discount
         if(discount < 0){
-            throw new ApiError("discount cannot be negative", 400);
+            throw new AppError(
+                "discount cannot be negative", 
+                400
+            );
         }
 
         //Create saleItems and reduce inventory 
@@ -44,12 +55,18 @@ const createSale = async ({
 
         for(const item of items){
 
-            if(!items.product){
-                throw new ApiError("Product is required for sale", 400);
+            if(!item.product){
+                throw new AppError(
+                    "Product is required for sale", 
+                    400
+                );
             }
 
             if(!Number.isInteger(item.quantity) || item.quantity < 1){
-                throw new ApiError("Quantity must be a whole number greater than 0", 400);
+                throw new AppError(
+                    "Quantity must be a whole number greater than 0", 
+                    400
+                );
             }
 
             //Check if product exists
@@ -58,11 +75,14 @@ const createSale = async ({
             }).session(session);
 
             if (!productExists) {
-                throw new AppError(`Product ${item.product} not found`, 404);
+                throw new AppError(
+                    `Product ${item.product} not found`, 
+                    404
+                );
             }
 
             //Atomically check quantity and reduce inventory
-            const product = await Product.findByIdAndUpdate(
+            const product = await Product.findOneAndUpdate(
                 {
                     _id: item.product,
                     quantity: { $gte: item.quantity },
@@ -73,8 +93,8 @@ const createSale = async ({
                     },
                 },
                 {
-                    new: true,
-                    session,
+                    returnDocument: "after",
+                    session
                 }
             );
 
@@ -83,7 +103,10 @@ const createSale = async ({
                     item.product
                 ).select("name quantity").session(session);
 
-                throw new AppError(`Insufficient stock for ${currentProduct.name}. Only ${currentProduct.quantity} available.`, 409);
+                throw new AppError(
+                    `Insufficient stock for ${currentProduct.name}. Only ${currentProduct.quantity} available.`, 
+                    409
+                );
             }
 
             //Update availability
@@ -101,7 +124,7 @@ const createSale = async ({
                 [
                     {
                         product: product._id,
-                        quantity: product.quantity,
+                        quantity: item.quantity,
                         unitPrice: product.price,
                         subtotal: itemSubtotal
                     },
@@ -117,10 +140,13 @@ const createSale = async ({
 
         // final calculation with discount
         if(discount > subtotal){
-            throw new ApiError("Discount cannot be greater than the sale subtotal", 400);
+            throw new AppError(
+                "Discount cannot be greater than the sale subtotal", 
+                400
+            );
         }
 
-        const totalAmount = subtotal = discount;
+        const totalAmount = subtotal - discount;
 
         // Create sale
         const [sale] = await Sale.create(
@@ -134,7 +160,7 @@ const createSale = async ({
                     totalAmount,
                     paymentMethod,
                     //Explicitly pending
-                    paymentStatus
+                    paymentStatus: "pending"
                 },
             ],
             { session }
@@ -146,14 +172,14 @@ const createSale = async ({
         return sale;
     } catch (error) {
         //undo everything if anything failed
-        if(error){
+        if(session.inTransaction()){
             await session.abortTransaction();
         }
 
         throw error;
 
     } finally {
-        await session.endSession();
+        session.endSession();
     }
 }
 

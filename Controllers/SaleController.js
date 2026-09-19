@@ -2,11 +2,13 @@ const saleService = require("../Services/saleService");
 
 exports.createSale = async (req, res, next) => {
     try {
-        const { customer, items, discount, paymentMethod } = req.body;
+        const { customer,items, discount, paymentMethod } = req.body;
+
+        const userId = req.user.id;
 
         const sale = await saleService.createSale({
             customer,
-            salesperson: req.user._id,
+            salesperson: userId,
             items,
             discount,
             paymentMethod

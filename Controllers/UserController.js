@@ -96,7 +96,7 @@ exports.loginUser = async (req, res) => {
         //generate a token(you can use jwt or any other method)
         //const token = generateToken(user); implement your token generation logic here
         //generate jwt token
-        const token = await jwt.sign({ id: user._id, email: user.email, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        const token = jwt.sign({ id: user._id.toString(), role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
         res.status(200).json({ 
             success: true,
